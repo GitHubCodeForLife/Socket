@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>Login Form</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+			.login-form{
+				width: 100%;
+				max-width: 400px;
+				margin: 20px auto;
+				background-color: #ffffff;
+				padding: 15px;
+				border: 1px solid #c4c4c4;
+				border-radius: 10px;
+			}
+			h1{
+				color: #000000;
+				font-size: 40px;
+				margin-bottom: 50px;
+			}
+			.input-box{
+				font-size: 20px;
+				margin-bottom: 10px;
+			}
+			.input-box input{
+				padding: 10px 0px;
+				width: 100%;
+				border: 1px solid #cccccc;
+				outline: none;
+			}
+			.input-box label{
+				color: #000000;
+				font-size: 30px;
+				margin-bottom: 50px;
+			}
+			.btn-box button{
+				padding: 10px 15px;
+				width: 100%;
+				background-color: #10e67b;
+				color: #ffffff;
+				border: none;
+				outline: none;
+			}
+		</style>
+    </head>
+    <body>
+        <main>
+            <div class="container">
+            <div class="login-form">
+                <form action="http://127.0.0.1:10000" method="post">
+                    <h1>Login Form</h1>
+                    <div class="input-box">
+						<label for="uname"><b>Username</b></label>
+						<input type="text" id="Username" name="Username" placeholder="Enter Username"><br><br>
+                    </div>
+                    <div class="input-box">
+						<label for="psw"><b>Password</b></label>
+						<input type="password" id="Password" name="Password" placeholder="Enter Password"><br><br>
+                    </div>
+                    <div class="btn-box">
+                        <button type="submit">
+                            Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </main>
+    </body>
+</html>
