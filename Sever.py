@@ -42,7 +42,7 @@ Content-Length: %d
 
 def MovePageIndex(Client):
 	header = """HTTP/1.1 301 Moved Permanently
-Location: http://127.0.0.1:8081/index.html
+Location: http://127.0.0.1:8080/index.html
 
 """
 	print("---------------HTTP respone move Index.html: ")
@@ -60,7 +60,7 @@ def MoveHomePage(Sever, Client, Request):
 		MovePageIndex(Client)
 		Sever.close()
 		#Tra ve file index.html cho client
-		Sever = CreateSever("localhost", 8081)
+		Sever = CreateSever("localhost", 8080)
 		Client, Request = ReadHTTPRequest(Sever)
 		print("------------------HTTP request: ")
 		print(Request)
@@ -79,7 +79,7 @@ def CheckPass(Request):
 
 def Move404(Sever, Client): 
 	header = """HTTP/1.1 301 Moved Permanently
-Location: http://127.0.0.1:8082/404.html
+Location: http://127.0.0.1:8080/404.html
 
 """
 	print("HTTP respone: ")
@@ -102,7 +102,7 @@ Content-Length: %d
 	Client.send(bytes(header, 'utf-8'))
 
 def Send404(Sever, Client): 
-	Sever = CreateSever("localhost", 8082)
+	Sever = CreateSever("localhost", 8080)
 	Client, Request = ReadHTTPRequest(Sever)
 	print("HTTP Request: ")
 	print(Request)
@@ -112,7 +112,7 @@ def Send404(Sever, Client):
 
 def MoveInfo(Sever, Client):
 	header = """HTTP/1.1 301 Moved Permanently
-Location: http://127.0.0.1:8082/info.html
+Location: http://127.0.0.1:8080/info.html
 
 """
 	print("HTTP respone: ")
@@ -134,8 +134,23 @@ Content-Length: %d
 	header += L.decode()
 	Client.send(bytes(header, 'utf-8'))
 
+def SendImg(Client, NameImg):
+	with open(NameImg, 'rb') as f:
+		L = f.read()
+		header ="""HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Encoding: UTF-8
+Content-Length: %d
+
+"""%len(L)
+		print("-----------------HTTP respone  image1.jpg: ")
+		print(header)
+		header =  bytes(header,'utf-8') + L
+		Client.send(header)	
+
+
 def SendInfo(Sever, Client):
-	Sever = CreateSever("localhost", 8082)
+	Sever = CreateSever("localhost", 8080)
 	Client, Request = ReadHTTPRequest(Sever)
 	print("HTTP Request: ")
 	print(Request)
@@ -143,34 +158,51 @@ def SendInfo(Sever, Client):
 		SendFileInfo(Client)
 	Sever.close()
 	#image 1
-	#tu viet
+	Sever = CreateSever("localhost", 8080)
+	Client, Request = ReadHTTPRequest(Sever)
+	print("HTTP Request: ")
+	print(Request)
+	if "GET /image1.jpg HTTP/1.1" in Request:
+		SendImg(Client, "image1.jpg")
+	if "GET /image2.jpg HTTP/1.1" in Request:
+		SendImg(Client, "image2.jpg")
+	Sever.close()
 	#image 2
-	#tu viet 
+	Sever = CreateSever("localhost", 8080)
+	Client, Request = ReadHTTPRequest(Sever)
+	print("HTTP Request: ")
+	print(Request)
+	if "GET /image1.jpg HTTP/1.1" in Request:
+		SendImg(Client, "image1.jpg")
+	if "GET /image2.jpg HTTP/1.1" in Request:
+		SendImg(Client, "image2.jpg")
+	Sever.close()
 
 if __name__ == "__main__":
-	print("Phan 1: tra ve trang chu khi truy cap sever")
-	#1. Create sever Socket 
-	Sever = CreateSever("localhost",8080)
-	#2. Client connect Sever + 3. Read HTTP Request
-	Client, Request = ReadHTTPRequest(Sever)
-	print("----------------HTTP requset: " )
-	print(Request)
-	#4. Send HTTP Response  + 5. Close Sever
-	MoveHomePage(Sever, Client, Request)
-	
-	#Phan 2 xu ly post user name va pass len sever 
-	#1. Create sever Socket 
-	Sever = CreateSever("localhost",10000)
-	#2. Client connect Sever + 3. Read HTTP Request
-	Client, Request = ReadHTTPRequest(Sever)
-	print("----------------HTTP requset: " )
-	print(Request)
-	if CheckPass(Request) == True: 
-		MoveInfo(Sever, Client)
-		SendInfo(Sever, Client)
-	else: 
-		Move404(Sever, Client)
-		Send404(Sever, Client)
-	
+	while True:
+		print("Phan 1: tra ve trang chu khi truy cap sever")
+		#1. Create sever Socket 
+		Sever = CreateSever("localhost",8080)
+		#2. Client connect Sever + 3. Read HTTP Request
+		Client, Request = ReadHTTPRequest(Sever)
+		print("----------------HTTP requset: " )
+		print(Request)
+		#4. Send HTTP Response  + 5. Close Sever
+		MoveHomePage(Sever, Client, Request)
+		
+		#Phan 2 xu ly post user name va pass len sever 
+		#1. Create sever Socket 
+		Sever = CreateSever("localhost",8080)
+		#2. Client connect Sever + 3. Read HTTP Request
+		Client, Request = ReadHTTPRequest(Sever)
+		print("----------------HTTP requset: " )
+		print(Request)
+		if CheckPass(Request) == True: 
+			MoveInfo(Sever, Client)
+			SendInfo(Sever, Client)
+		else: 
+			Move404(Sever, Client)
+			Send404(Sever, Client)
+		
 	
 	
