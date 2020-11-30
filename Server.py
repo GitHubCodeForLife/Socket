@@ -1,10 +1,10 @@
 import socket
 
-def CreateSever(host, port): 
-	Sever = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	Sever.bind((host,port))
-	Sever.listen(5)
-	return Sever
+def CreateServer(host, port): 
+	Server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	Server.bind((host,port))
+	Server.listen(5)
+	return Server
 
 def ReadRequest(Client):
 	re = ""
@@ -19,12 +19,12 @@ def ReadRequest(Client):
 	finally:
 		return re
 
-#2. Client connect Sever + 3. Read HTTP Request
-def ReadHTTPRequest(Sever): 
+#2. Client connect Server + 3. Read HTTP Request
+def ReadHTTPRequest(Server): 
 	re = ""
 	while (re == ""):
-		Client, address = Sever.accept()
-		print("Client: ", address," da ket noi toi sever")
+		Client, address = Server.accept()
+		print("Client: ", address," da ket noi toi Server")
 		re = ReadRequest(Client)
 	return Client, re
 
@@ -49,22 +49,22 @@ Location: http://127.0.0.1:8080/index.html
 	print(header)
 	Client.send(bytes(header,'utf-8'))
 
-#4. Send HTTP Response  + 5. Close Sever
-def MoveHomePage(Sever, Client, Request):
+#4. Send HTTP Response  + 5. Close Server
+def MoveHomePage(Server, Client, Request):
 	if "GET /index.html HTTP/1.1" in Request: 
 		SendFileIndex(Client)
-		Sever.close()
+		Server.close()
 		return True
 	if "GET / HTTP/1.1" in Request:
 		#Move Index.html 
 		MovePageIndex(Client)
-		Sever.close()
+		Server.close()
 		#Tra ve file index.html cho client
-		Sever = CreateSever("localhost", 8080)
-		Client, Request = ReadHTTPRequest(Sever)
+		Server = CreateServer("localhost", 8080)
+		Client, Request = ReadHTTPRequest(Server)
 		print("------------------HTTP request: ")
 		print(Request)
-		MoveHomePage(Sever, Client, Request)
+		MoveHomePage(Server, Client, Request)
 		return True
 
 
@@ -77,7 +77,7 @@ def CheckPass(Request):
 		return False
 
 
-def Move404(Sever, Client): 
+def Move404(Server, Client): 
 	header = """HTTP/1.1 301 Moved Permanently
 Location: http://127.0.0.1:8080/404.html
 
@@ -85,7 +85,7 @@ Location: http://127.0.0.1:8080/404.html
 	print("HTTP respone: ")
 	print(header)
 	Client.send(bytes(header,"utf-8"))
-	Sever.close()
+	Server.close()
 
 def SendFile404(Client): 
 	f = open ("404.html", "rb")
@@ -101,16 +101,16 @@ Content-Length: %d
 	header += L.decode()
 	Client.send(bytes(header, 'utf-8'))
 
-def Send404(Sever, Client): 
-	Sever = CreateSever("localhost", 8080)
-	Client, Request = ReadHTTPRequest(Sever)
+def Send404(Server, Client): 
+	Server = CreateServer("localhost", 8080)
+	Client, Request = ReadHTTPRequest(Server)
 	print("HTTP Request: ")
 	print(Request)
 	if "GET /404.html HTTP/1.1" in Request:
 		SendFile404(Client)
-	Sever.close()
+	Server.close()
 
-def MoveInfo(Sever, Client):
+def MoveInfo(Server, Client):
 	header = """HTTP/1.1 301 Moved Permanently
 Location: http://127.0.0.1:8080/info.html
 
@@ -118,7 +118,7 @@ Location: http://127.0.0.1:8080/info.html
 	print("HTTP respone: ")
 	print(header)
 	Client.send(bytes(header,"utf-8"))
-	Sever.close()
+	Server.close()
 
 def SendFileInfo(Client): 
 	f = open ("info.html", "rb")
@@ -149,17 +149,17 @@ Content-Length: %d
 		Client.send(header)	
 
 
-def SendInfo(Sever, Client):
-	Sever = CreateSever("localhost", 8080)
-	Client, Request = ReadHTTPRequest(Sever)
+def SendInfo(Server, Client):
+	Server = CreateServer("localhost", 8080)
+	Client, Request = ReadHTTPRequest(Server)
 	print("HTTP Request: ")
 	print(Request)
 	if "GET /info.html HTTP/1.1" in Request:
 		SendFileInfo(Client)
-	Sever.close()
+	Server.close()
 	#image 1
-	Sever = CreateSever("localhost", 8080)
-	Client, Request = ReadHTTPRequest(Sever)
+	Server = CreateServer("localhost", 8080)
+	Client, Request = ReadHTTPRequest(Server)
 	print("HTTP Request: ")
 	print(Request)
 	if "GET /image1.jpg HTTP/1.1" in Request:
@@ -167,42 +167,41 @@ def SendInfo(Sever, Client):
 	if "GET /image2.jpg HTTP/1.1" in Request:
 		SendImg(Client, "image2.jpg")
 
-	Client, Request = ReadHTTPRequest(Sever)
+	Client, Request = ReadHTTPRequest(Server)
 	print("HTTP Request: ")
 	print(Request)
 	if "GET /image1.jpg HTTP/1.1" in Request:
 		SendImg(Client, "image1.jpg")
 	if "GET /image2.jpg HTTP/1.1" in Request:
 		SendImg(Client, "image2.jpg")
-	Sever.close()
+	Server.close()
 	#image 2
 
 
 if __name__ == "__main__":
 	while True:
-		print("Phan 1: tra ve trang chu khi truy cap sever")
-		#1. Create sever Socket 
-		Sever = CreateSever("localhost",8080)
-		#2. Client connect Sever + 3. Read HTTP Request
-		Client, Request = ReadHTTPRequest(Sever)
+		print("Phan 1: tra ve trang chu khi truy cap Server")
+		#1. Create Server Socket 
+		Server = CreateServer("localhost",8080)
+		#2. Client connect Server + 3. Read HTTP Request
+		Client, Request = ReadHTTPRequest(Server)
 		print("----------------HTTP requset: " )
 		print(Request)
-		#4. Send HTTP Response  + 5. Close Sever
-		MoveHomePage(Sever, Client, Request)
-		
-		#Phan 2 xu ly post user name va pass len sever 
-		#1. Create sever Socket 
-		Sever = CreateSever("localhost",8080)
-		#2. Client connect Sever + 3. Read HTTP Request
-		Client, Request = ReadHTTPRequest(Sever)
+		#4. Send HTTP Response  + 5. Close Server
+		MoveHomePage(Server, Client, Request)
+		#Phan 2 xu ly post user name va pass len Server 
+		#1. Create Server Socket 
+		Server = CreateServer("localhost",8080)
+		#2. Client connect Server + 3. Read HTTP Request
+		Client, Request = ReadHTTPRequest(Server)
 		print("----------------HTTP requset: " )
 		print(Request)
 		if CheckPass(Request) == True: 
-			MoveInfo(Sever, Client)
-			SendInfo(Sever, Client)
+			MoveInfo(Server, Client)
+			SendInfo(Server, Client)
 		else: 
-			Move404(Sever, Client)
-			Send404(Sever, Client)
+			Move404(Server, Client)
+			Send404(Server, Client)
 		
 	
 	
