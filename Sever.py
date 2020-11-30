@@ -143,7 +143,7 @@ Content-Encoding: UTF-8
 Content-Length: %d
 
 """%len(L)
-		print("-----------------HTTP respone  image1.jpg: ")
+		print("-----------------HTTP respone: ")
 		print(header)
 		header =  bytes(header,'utf-8') + L
 		Client.send(header)	
@@ -166,9 +166,7 @@ def SendInfo(Sever, Client):
 		SendImg(Client, "image1.jpg")
 	if "GET /image2.jpg HTTP/1.1" in Request:
 		SendImg(Client, "image2.jpg")
-	Sever.close()
-	#image 2
-	Sever = CreateSever("localhost", 8080)
+
 	Client, Request = ReadHTTPRequest(Sever)
 	print("HTTP Request: ")
 	print(Request)
@@ -177,6 +175,8 @@ def SendInfo(Sever, Client):
 	if "GET /image2.jpg HTTP/1.1" in Request:
 		SendImg(Client, "image2.jpg")
 	Sever.close()
+	#image 2
+
 
 if __name__ == "__main__":
 	while True:
